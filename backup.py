@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+
 from dotenv import load_dotenv
 import datetime, os, subprocess, shlex
 
