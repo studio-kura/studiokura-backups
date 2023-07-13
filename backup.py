@@ -5,6 +5,7 @@ import datetime, os, subprocess, shlex
 
 load_dotenv()
 
+zip_password = os.getenv("ZIP_PASSWORD")
 mysql_backups_dir = os.getenv("MYSQL_BACKUPS_DIR")
 mysql_username = os.getenv("MYSQL_USERNAME")
 mysql_hosts = [
@@ -52,5 +53,5 @@ for i in range(6):
     f.close()
 
 os.system(
-    f"cd {mysql_backups_dir} && rm mysql-backups-{date}.zip ; zip mysql-backups-{date}.zip *sql && rm {mysql_backups_dir}*sql ; cd -"
+    f'cd {mysql_backups_dir} && rm mysql-backups-{date}.zip ; zip --password "{zip_password}" mysql-backups-{date}.zip *sql && rm {mysql_backups_dir}*sql ; cd -'
 )
