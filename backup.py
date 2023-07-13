@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+
 from dotenv import load_dotenv
 import datetime, os, subprocess, shlex
 
@@ -48,3 +50,7 @@ for i in range(6):
     f = open(filepath, "wb")
     f.write(dump_output)
     f.close()
+
+os.system(
+    f"cd {mysql_backups_dir} && rm mysql-backups-{date}.zip ; zip mysql-backups-{date}.zip *sql && rm {mysql_backups_dir}*sql ; cd -"
+)
