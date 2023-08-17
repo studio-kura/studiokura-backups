@@ -6,7 +6,9 @@ import datetime, os, subprocess, shlex
 load_dotenv()
 
 zip_password = os.getenv("ZIP_PASSWORD")
-mysql_backups_dir = os.getenv("MYSQL_BACKUPS_DIR")
+
+# Variables related to MySQL backups
+backups_dir = os.getenv("BACKUPS_DIR")
 mysql_username = os.getenv("MYSQL_USERNAME")
 mysql_hosts = [
     os.getenv("MYSQL_HOST_0"),
@@ -33,13 +35,17 @@ mysql_pws = [
     os.getenv("MYSQL_PW_5"),
 ]
 
+# Variables related to filesystem backups
+fs_path = os.getenv("FS_PATH")
+fs_filenames = [os.getenv("FS_FILENAME_1"), os.getenv("FS_FILENAME_2")]
+
 date = str(datetime.datetime.now().date())
 
 for i in range(6):
     mysql_host = mysql_hosts[i]
     mysql_db = mysql_dbs[i]
     mysql_pw = mysql_pws[i]
-    filepath = os.path.join(mysql_backups_dir, f"{mysql_db}-{date}.sql")
+    filepath = os.path.join(backups_dir, f"{mysql_db}-{date}.sql")
     print(filepath)
 
     args = shlex.split(
@@ -53,5 +59,14 @@ for i in range(6):
     f.close()
 
 os.system(
-    f'cd {mysql_backups_dir} && rm mysql-backups-{date}.zip ; zip --password "{zip_password}" mysql-backups-{date}.zip *sql && rm {mysql_backups_dir}*sql ; cd -'
+    f'cd {backups_dir} && rm mysql-backups-{date}.zip ; zip --password "{zip_password}" mysql-backups-{date}.zip *sql && rm {backups_dir}*sql ; cd -'
 )
+
+if fs_filenames[0]:
+    os.system(
+        f'cd {backups_dir} && rm fs-backups-{date}.zip ; find "{fs_path}" -name "{fs_filenames[0]}" | zip --password "{zip_password}" fs-backups-{date}.zip -@ ; cd -'
+    )
+if fs_filenames[1]:
+    os.system(
+        f'cd {backups_dir} && find "{fs_path}" -name "{fs_filenames[1]}" | zip --password "{zip_password}" fs-backups-{date}.zip -@ ; cd -'
+    )
